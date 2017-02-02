@@ -62,6 +62,11 @@ Both projection mapping prototypes modeled the projector with a pinhole camera \
 
 \subsection{Projector calibration}
 
+High accuracy projection requires proper hardware / software calibration of the projectors and also appropriate positioning within the intended workspace in order to avoid occlusions caused by the objects 3D shape or the human operators. The next sections will detail the required calibration steps for both \gls{dlp} projectors and galvanometer scanners.
+
+
+\subsubsection{\glsentrytext{dlp} projector intrinsics calibration}
+
 The intrinsic parameters of a \gls{dlp} projector can be computed using image analysis of complementary gray code patterns (seen in \cref{fig:dlp-calibration-pattern-wall}) projected into a chessboard. The calibration system proposed in \cite{Moreno2012} was used to retrieve the 5 intrinsic parameters (Fx, Fy, Cx, Cy, S) of the projector along with the 3D position and rotation of the projector in relation to the camera. It was used 5 sets of 42 gray code image patterns captured with the chessboard in different positions and orientations in relation to the projector, that was at a distance of 2.2 meters from the table workspace. After calibration it was projected a validation pattern to evaluate the accuracy of the projection, and it can be seen in \cref{fig:dlp-projected-chessboard} that the white squares were projected into the chessboard with sub-millimeter accuracy.
 
 \begin{figure}[H]
@@ -76,7 +81,7 @@ The intrinsic parameters of a \gls{dlp} projector can be computed using image an
 \end{figure}
 
 
-\subsection{Camera extrinsics calibration}
+\subsubsection{Camera extrinsics calibration}
 
 For fast recalibration of the projector 3D position and orientation in the global coordinate system of the workspace, both the \gls{dlp} projector and galvanometer scanner had a 5 \gls{mp} Mako G-503B\footnote{\url{https://www.alliedvision.com/en/products/cameras/detail/Mako\%20G/G-503.html}} camera firmly attached to the projectors support. As such, the global position of the projector is given by multiplying the $4 \times 4$ homogeneous matrix that gives the transformation from the chessboard corner (shown in \cref{fig:chess-board-detection}) to the camera, with the $4 \times 4$ homogeneous matrix that gives the transformation from the camera to the projector.
 
