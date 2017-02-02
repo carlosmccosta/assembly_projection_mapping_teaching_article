@@ -27,9 +27,7 @@ For video projection mapping purposes \cite{Raskar1998,Bimber2005,Tan2013,Fujimo
 \footnotetext[\value{footnote}]{\url{http://perso.ensta-paristech.fr/~filliat/Courses/2011_projets_C10-2/BRUNEAU_DUBRAY_MURGUET/monoSLAM_bruneau_dubray_murguet_en.html}}
 
 
-The mathematical modeling of a \gls{dlp} projector can be seen as an inverse camera, given the grid disposition of the mirrors in the \gls{dmd} and the usage of a lens to focus the light into the projection surface. The galvanometer scanners model is slightly different since there is no lens and no focal point, but it can be approximated by a pinhole camera for efficient scene rendering using \gls{opengl} / Direct3D, with later distortion correction using the mathematical models proposed in \cite{Manakov2011}.
-
-Both projection mapping prototypes modeled the projector with a pinhole camera \cite{Hartley2003} (shown in \cref{fig:camera-intrinsics}) using the \gls{opengl} / Direct3D projection matrix. The matrix formulation for computing the projection matrix is shown in \cref{eq:projection-matrix,eq:ndc-matrix,eq:perspective-matrix}, and it includes the focal lengths (Fx, Fy), principal point (Cx, Cy) and axis skew (S) intrinsic parameters (in pixel units). The correction of lens distortion for \gls{dlp} projectors used 3 coefficients for removing radial distortions and 2 coefficients for accounting for the tangential distortions. The correction of the galvanometer scanners distortion (seen in \cref{fig:laser-projector-diagram-1-colors}) is performed by warping the projection points using the MediaLas LaserCAM application in order to remove the distortion that occurs mainly in the horizontal axis.
+The mathematical modeling of a \gls{dlp} projector can be seen as an inverse pinhole camera \cite{Hartley2003} (shown in \cref{fig:camera-intrinsics}), given the grid disposition of the mirrors in the \gls{dmd} and the very low distortion that modern \gls{dlp} projectors have. As such, scene rendering can be performed efficiently using the \gls{opengl} / Direct3D projection matrix (shown in \cref{eq:projection-matrix,eq:ndc-matrix,eq:perspective-matrix}), which incorporates the focal lengths (Fx, Fy), principal point (Cx, Cy) and axis skew (S) intrinsic camera parameters (in pixel units). The correction of lens distortion for \gls{dlp} projectors typically uses 3 coefficients for removing radial distortions and 2 coefficients for accounting for the tangential distortions.
 
 {
 	\small
@@ -62,12 +60,12 @@ Both projection mapping prototypes modeled the projector with a pinhole camera \
 
 \subsection{Projector calibration}
 
-High accuracy projection requires proper hardware / software calibration of the projectors and also appropriate positioning within the intended workspace in order to avoid occlusions caused by the objects 3D shape or the human operators. The next sections will detail the required calibration steps for both \gls{dlp} projectors and galvanometer scanners.
+High accuracy projection requires proper hardware / software calibration of the projectors and also appropriate positioning within the intended workspace in order to avoid occlusions caused by the objects 3D shape or the human operators. The next sections will detail the required calibration steps for achieving submillimeter projection accuracy.
 
 
 \subsubsection{\glsentrytext{dlp} projector intrinsics calibration}
 
-The intrinsic parameters of a \gls{dlp} projector can be computed using image analysis of complementary gray code patterns (seen in \cref{fig:dlp-calibration-pattern-wall}) projected into a chessboard. The calibration system proposed in \cite{Moreno2012} was used to retrieve the 5 intrinsic parameters (Fx, Fy, Cx, Cy, S) of the projector along with the 3D position and rotation of the projector in relation to the camera. It was used 5 sets of 42 gray code image patterns captured with the chessboard in different positions and orientations in relation to the projector, that was at a distance of 2.2 meters from the table workspace. After calibration it was projected a validation pattern to evaluate the accuracy of the projection, and it can be seen in \cref{fig:dlp-projected-chessboard} that the white squares were projected into the chessboard with sub-millimeter accuracy.
+The intrinsic parameters of a \gls{dlp} projector can be computed using image analysis of complementary gray code patterns (example in \cref{fig:dlp-calibration-pattern-wall}) projected into a chessboard. The calibration system proposed in \cite{Moreno2012} was used to retrieve the 5 intrinsic parameters (Fx, Fy, Cx, Cy, S) of the projector along with the 3D position and rotation of the projector in relation to the camera. It was used 5 sets of 42 gray code image patterns captured with the chessboard in different positions and orientations in relation to the projector, that was at a distance of 0.81 meters from the table workspace. After calibration it was projected a validation pattern to evaluate the accuracy of the projection, and it can be seen in \cref{fig:dlp-projected-chessboard} that the white squares were projected into the chessboard with sub-millimeter accuracy.
 
 \begin{figure}[H]
 	\begin{floatrow}[2]
@@ -88,17 +86,18 @@ For fast recalibration of the projector 3D position and orientation in the globa
 For the \gls{dlp} projector the camera-to-projector matrix was computed using the software described in \cite{Moreno2012}. For the galvanometer scanner this matrix was calculated by placing the projector at 2 meters from a wall, properly leveled in order to ensure that the laser beam was hitting the wall perpendicularly, and then placing a chessboard in the wall in such a way that the center of projection was hitting one of the chessboard corners. By knowing the projector and camera position / orientation in relation to a known coordinate system (the chessboard origin), the transformation from the camera to the galvanometer scanner can be easily computed using \cref{eq:extrinsics-camera-projector}.
 
 \begin{small}
-	\begin{equation}\label{eq:extrinsics-camera-projector}
-	CameraToProjectorMatrix = ProjectorToChessboardOrigin \times (CameraToChessboardOrigin^{-1})
-	\end{equation}
+	\begin{multline}\label{eq:extrinsics-camera-projector}
+	CameraToProjectorMatrix = ProjectorToChessboardOrigin \times \\
+	(CameraToChessboardOrigin^{-1})
+	\end{multline}
 \end{small}
 
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.47\linewidth]{chess-board-detection}
-	\caption{Example of chessboard origin detection}
-	\label{fig:chess-board-detection}
-\end{figure}
+%\begin{figure}[H]
+%	\centering
+%	\includegraphics[width=0.47\linewidth]{chess-board-detection}
+%	\caption{Example of chessboard origin detection}
+%	\label{fig:chess-board-detection}
+%\end{figure}
 
 
 \subsection{Scene rendering}
