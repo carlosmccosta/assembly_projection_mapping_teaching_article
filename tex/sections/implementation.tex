@@ -84,10 +84,10 @@ After having the intrinsic parameters of the camera and projector along with the
 
 \subsection{Scene rendering}
 
-For achieving accurate projection mapping, the Gazebo simulator camera implementation was improved to allow the setting of a custom projection matrix in order to perform 3D rendering with a camera model that simulates the projector intrinsic parameters. Moreover, it was added the possibility to dynamically change image, video and text during runtime, for allowing the display of the relevant information for each assembly step.
-For efficient 3D scene rendering, the Gazebo simulator relies on the cross platform open source Ogre3D graphics engine\footnote{\url{http://www.ogre3d.org}}, that in turn uses the \gls{opengl} \gls{gpu} \glspl{api} to take advantage of the massively parallel graphics cards currently available to generate raster images for the \gls{dlp} projector (example in \cref{fig:scene-rendering}).
+For achieving accurate projection mapping, the Gazebo simulator\footnote{\url{http://gazebosim.org}} camera implementation was improved to allow the setting of a custom projection matrix in order to perform 3D rendering with a camera model that takes into account the projector intrinsic parameters. Moreover, it was added the possibility to dynamically change image, video and text during runtime for allowing the display of the relevant information for each assembly step.
+For efficient 3D scene rendering, the Gazebo simulator relies on the cross platform open source Ogre3D graphics engine\footnote{\url{http://www.ogre3d.org}}, that in turn uses the \gls{opengl} \gls{gpu} \gls{api} to take advantage of the massively parallel graphics cards currently available to generate raster images for the \gls{dlp} projector (example in \cref{fig:scene-rendering}).
 
-For user interface, the Gazebo simulator allows visual inspection of the scene while also giving the option to add new objects or move and rotate existing models. Moreover, for lightweight rendering, it can also start in server mode without a \gls{gui}.
+For user interface, the Gazebo simulator has a Qt\footnote{\url{https://www.qt.io/}} \gls{gui} that allows visual inspection of the scene while also giving the option to add new objects or move and rotate existing models. Moreover, for lightweight rendering, it can also start in server mode without a \gls{gui}.
 
 \begin{figure}
 	\centering
@@ -242,5 +242,5 @@ If all these metrics are within acceptable thresholds, then the robot pose can b
 	\includegraphics[height=.182\textheight]{initial-pose-estimation-2-before}
 	\hspace{0.5em}
 	\includegraphics[height=.182\textheight]{initial-pose-estimation-2-after}
-	\caption{Initial pose estimation of assembled object}
+	\caption{Initial pose estimation of assembled starter engine}
 \end{figure}
