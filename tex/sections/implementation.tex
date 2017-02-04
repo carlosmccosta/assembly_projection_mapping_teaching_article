@@ -1,6 +1,6 @@
 \section{Projection mapping}
 
-FF.
+Projection mapping is a spatial augmented reality \cite{Bimber2005} technique in which video projectors are used to overlay virtual models on top of real objects or surfaces. This allows to create an immersive environment that together with 3D perception systems can be used to develop interactive interfaces for displaying contextual information useful to help or teach human operators performing complex tasks faster. The next sections describe the mathematical projector modeling and the associated calibration that is necessary for performing proper 3D rendering of the virtual world in order to achieve high accuracy projection.
 
 
 \subsection{Projector modeling}
@@ -27,7 +27,7 @@ For video projection mapping purposes \cite{Raskar1998,Bimber2005,Tan2013,Fujimo
 The mathematical modeling of a \gls{dlp} projector can be seen as an inverse pinhole camera \cite{Hartley2003} (shown in \cref{fig:camera-intrinsics}), given the grid disposition of the mirrors in the \gls{dmd} and the very low distortion that modern \gls{dlp} projectors have. As such, scene rendering can be performed efficiently using the \gls{opengl} projection matrix (shown in \cref{eq:projection-matrix,eq:ndc-matrix,eq:perspective-matrix}), which incorporates the focal lengths (Fx, Fy), principal point (Cx, Cy) and axis skew (S) intrinsic camera parameters (in pixel units). The correction of lens distortion for \gls{dlp} projectors typically uses 3 coefficients for removing radial distortions and 2 coefficients for accounting for the tangential distortions.
 
 {
-	\small
+	\scriptsize
 	\begin{equation}\label{eq:projection-matrix}
 	ProjectionMatrix = \glsentrytext{ndc}Matrix \times PerspectiveMatrix
 	\end{equation}
@@ -72,14 +72,14 @@ The intrinsic parameters of a \gls{dlp} projector can be computed using image an
 	\end{floatrow}
 \end{figure}
 
-After having the intrinsic parameters of the camera and projector along with the relative position of the projector in relation to the camera, computing the global position of the projector in relation to the chessboard reference frame can be done by multiplying the $4 \times 4$ homogeneous matrix that gives the transformation from the chessboard bottom left corner (shown in \cref{fig:chess-board-detection}) to the camera, with the $4 \times 4$ homogeneous matrix that gives the transformation from the camera to the projector.
+After having the intrinsic parameters of the camera and projector along with the relative position of the projector in relation to the camera, computing the global position of the projector in relation to the chessboard reference frame can be done by multiplying the $4 \times 4$ homogeneous matrix that gives the transformation from the chessboard bottom left corner to the camera, with the $4 \times 4$ homogeneous matrix that gives the transformation from the camera to the projector.
 
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.47\linewidth]{chess-board-detection}
-	\caption{Example of chessboard origin detection}
-	\label{fig:chess-board-detection}
-\end{figure}
+%\begin{figure}[H]
+%	\centering
+%	\includegraphics[width=0.47\linewidth]{chess-board-detection}
+%	\caption{Example of chessboard origin detection}
+%	\label{fig:chess-board-detection}
+%\end{figure}
 
 
 \subsection{Scene rendering}
@@ -91,7 +91,7 @@ For user interface, the Gazebo simulator allows visual inspection of the scene w
 
 \begin{figure}
 	\centering
-	\includegraphics[width=0.77\linewidth]{scene-rendering}
+	\includegraphics[width=0.7\linewidth]{scene-rendering}
 	\caption{3D scene rendering using the Gazebo simulator}
 	\label{fig:scene-rendering}
 \end{figure}
@@ -122,10 +122,10 @@ For user interface, the Gazebo simulator allows visual inspection of the scene w
 \begin{figure}[H]
 	\begin{floatrow}[2]
 		\ffigbox[\FBwidth]
-		{\includegraphics[height=.33\textheight]{human-machine-interface}}
+		{\includegraphics[height=.3\textheight]{human-machine-interface}}
 		{\caption{Rendering of the human machine interface}\label{fig:human-machine-interface}}
 		\ffigbox[\FBwidth]
-		{\includegraphics[height=.33\textheight]{interaction-rois}}
+		{\includegraphics[height=.3\textheight]{interaction-rois}}
 		{\caption{Regions of interest for the human machine interaction interface}\label{fig:interaction-rois}}
 	\end{floatrow}
 \end{figure}
@@ -139,8 +139,8 @@ For user interface, the Gazebo simulator allows visual inspection of the scene w
 
 \begin{figure}[ht]
 	\centering
-	\includegraphics[height=.25\textheight]{object-reconstruction-back}
-	\includegraphics[height=.25\textheight]{object-reconstruction-front}
+	\includegraphics[height=.2\textheight]{object-reconstruction-back}
+	\includegraphics[height=.2\textheight]{object-reconstruction-front}
 	\caption{3D model of the starter motor reconstructed using structured light}
 \end{figure}
 
@@ -229,13 +229,13 @@ If all these metrics are within acceptable thresholds, then the robot pose can b
 	\item After the initial pose estimation, the object pose is tracked using only ICP (no need for feature detection and estimation)
 \end{itemize}
 
-\begin{figure}[!ht]
-	\centering
-	\includegraphics[height=.27\textheight]{initial-pose-estimation-1-before}
-	\hspace{0.5em}
-	\includegraphics[height=.27\textheight]{initial-pose-estimation-1-after}
-	\caption{Initial pose estimation of assembled object}
-\end{figure}
+%\begin{figure}[!ht]
+%	\centering
+%	\includegraphics[height=.27\textheight]{initial-pose-estimation-1-before}
+%	\hspace{0.5em}
+%	\includegraphics[height=.27\textheight]{initial-pose-estimation-1-after}
+%	\caption{Initial pose estimation of assembled object}
+%\end{figure}
 
 \begin{figure}[!ht]
 	\centering
