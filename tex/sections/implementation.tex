@@ -72,14 +72,14 @@ The intrinsic parameters of a \gls{dlp} projector can be computed using image an
 	\end{floatrow}
 \end{figure}
 
-After having the intrinsic parameters of the camera and projector along with the relative position of the projector in relation to the camera, computing the global position of the projector in relation to the chessboard reference frame can be done by multiplying the $4 \times 4$ homogeneous matrix that gives the transformation from the chessboard bottom left corner to the camera, with the $4 \times 4$ homogeneous matrix that gives the transformation from the camera to the projector.
+After having the intrinsic parameters of the camera and projector along with the relative position of the projector in relation to the camera, computing the global position of the projector in relation to the chessboard reference frame can be done by multiplying the $4 \times 4$ homogeneous matrix that gives the transformation from the chessboard bottom left corner to the camera (example in \cref{fig:chess-board-detection}), with the $4 \times 4$ homogeneous matrix that gives the transformation from the camera to the projector.
 
-%\begin{figure}[H]
-%	\centering
-%	\includegraphics[width=0.47\linewidth]{chess-board-detection}
-%	\caption{Example of chessboard origin detection}
-%	\label{fig:chess-board-detection}
-%\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.47\linewidth]{chess-board-detection}
+	\caption{Example of chessboard origin detection}
+	\label{fig:chess-board-detection}
+\end{figure}
 
 
 \subsection{Scene rendering}
