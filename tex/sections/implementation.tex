@@ -100,24 +100,11 @@ For user interface, the Gazebo simulator has a Qt\footnote{\url{https://www.qt.i
 
 \section{Human machine interaction}
 
-\begin{itemize}
-	\item Modeling of the user interaction with the projected interface by defining a set of Regions of Interest (ROIs) in which the 3D sensor data falls
-	\item When a minimum number of points falls within a given ROI, the points centroid is extracted and:
-	\begin{itemize}
-		\item If it is a button, the user needs to hold the finger for 0.2 seconds to trigger the action. Moreover, to avoid unintentional triggering , the user needs to remove the finger from the ROI to trigger the action again
-		\item If it is the video seek bar, the video position is computed considering the height of the video and the relative position of the finger in relation to the button of the video
-	\end{itemize}
-\end{itemize}
+The immersive \gls{hmi} system developed (shown in \cref{fig:human-machine-interface}) projects into the workspace detailed textual information of the current assembly task along with a video showing the operation being performed by an expert operator. Given the high variability of assembly / maintenance operations, the system was designed to decompose the assembly process into a set of small and concise operations. This allows to keep the operators focused on the current task and reduces the required projection area. Moreover, the operator can pause and move the video forwards and backwards, allowing to inspect a given complex operation with more time.
 
-\textbf{Supported actions}
-\begin{itemize}
-	\item Go to the first assembly step
-	\item Go to the previous assembly step
-	\item Go to the next assembly step
-	\item Go to the last assembly step
-	\item Pause the video
-	\item Change the position of the video (seek)
-\end{itemize}
+The user interaction with the projected \gls{hmi} is done by analyzing the 3D point cloud sensor data that falls within a set of \glspl{roi} (shown in \cref{fig:interaction-rois}). When a minimum number of points falls within a given \gls{roi}, the cluster of points centroid is extracted (shown as spheres in \cref{fig:interaction-rois}) and if this \gls{roi} is associated with a button, the user needs to hold the finger for at least 0.25 seconds to trigger the action. Moreover, to avoid unintentional action triggering, the user needs to remove and insert the finger into the \gls{roi} to request the action again. On the other hand, if the \gls{roi} is associated with the video seek bar \gls{roi} (the vertical yellow box in \cref{fig:interaction-rois}), the video seek time is computed considering the relative position of the finger within the \gls{roi} (the bottom of the \gls{roi} is associated with the start of the current video while the top corresponds to the end of the video).
+
+Besides video play / pause functionality (provided by the blue middle \gls{roi} shown in \cref{fig:interaction-rois}), the \gls{hmi} also allows the operator to navigate within the assembly operations. As can be seen in \cref{fig:human-machine-interface,fig:interaction-rois}, there are buttons for moving to the first, previous, next and last assembly step. Moreover, it is also shown what is the number of the current assembly step and how many steps are required to complete the assembly.
 
 \begin{figure}[H]
 	\begin{floatrow}[2]
@@ -126,7 +113,7 @@ For user interface, the Gazebo simulator has a Qt\footnote{\url{https://www.qt.i
 		{\caption{Rendering of the human machine interface}\label{fig:human-machine-interface}}
 		\ffigbox[\FBwidth]
 		{\includegraphics[height=.3\textheight]{interaction-rois}}
-		{\caption{Regions of interest for the human machine interaction interface}\label{fig:interaction-rois}}
+		{\caption{\glspl{roi} for the \gls{hmi} overlaid on top of the point cloud sensor data}\label{fig:interaction-rois}}
 	\end{floatrow}
 \end{figure}
 
