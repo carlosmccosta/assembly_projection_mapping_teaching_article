@@ -1,4 +1,4 @@
-\section{Training operators to assemble a starter engine}\label{sec:results}
+\section{Training operators to assemble a starter motor}\label{sec:results}
 
 Small parts assembly of flexible components is a very challenging task to automate given the advanced sensing and gripping technologies that it requires. As such, currently it is more cost effective to have cooperative assembly lines in which humans perform the tasks that require robust perception, adaptive grasping and high level cognition while the robot does the remaining tasks.
 
@@ -8,51 +8,32 @@ In the next sections we will present the application of our immersive training s
 
 \subsection{Testing platform}
 
-Our immersive teaching system was developed as a \gls{ros} Kinetic\footnote{\url{http://www.ros.org}} package for fast integration into robotic systems and relies on the Gazebo simulator for 3D rendering and the \gls{pcl} for 3D perception. It was tested with a BenQ W1070 \gls{dlp} projector\footnote{\url{http://www.benq.com/product/projector/W1070}} for projecting the teaching information, an Asus Xtion Pro Live\footnote{\url{https://www.asus.com/3D-Sensor/Xtion_PRO_LIVE}} structured light 3d sensor for object recognition and a Kinect 2\footnote{\url{http://www.xbox.com/en-US/xbox-one/accessories/kinect}} \gls{tof} 3D sensor for the user interaction analysis. In \cref{fig:hardware} it can be seen the work area and the hardware disposition (projector on the top right, Kinect 2 on the left, Asus Xtion below the projector and the David Laser 3D structured light system camera at the top).
+Our immersive teaching system was developed as a \gls{ros} Kinetic\footnote{\url{http://www.ros.org}} package for fast integration into robotic systems and relies on the Gazebo simulator for 3D rendering and the \gls{pcl} for 3D perception. It was tested with a BenQ W1070 \gls{dlp} projector\footnote{\url{http://www.benq.com/product/projector/W1070}} for projecting the teaching information, an Asus Xtion Pro Live\footnote{\url{https://www.asus.com/3D-Sensor/Xtion_PRO_LIVE}} structured light 3D sensor for object recognition and a Kinect 2\footnote{\url{http://www.xbox.com/en-US/xbox-one/accessories/kinect}} \gls{tof} 3D sensor for the user interaction analysis. In \cref{fig:hardware} it can be seen the work area and the hardware disposition (projector on the top right, Kinect 2 on the left, Asus Xtion below the projector and the David Laser 3D structured light system camera at the top).
 
 \begin{figure}[ht]
 	\centering
-	\includegraphics[width=0.4\linewidth]{hardware}
+	\includegraphics[height=.33\textheight]{hardware-front}
+	\includegraphics[height=.33\textheight]{hardware-side}
 	\caption{Hardware setup}
 	\label{fig:hardware}
 \end{figure}
 
 
+
 \subsection{Training session}
+
+The training session started by gathering all the assembly parts and the required tools for performing the starter motor assembly (shown in \cref{fig:assembly-parts}). Then using the immersive teaching system, the operator read the instructions, watched the videos (example in \cref{fig:assembly}) and navigated through the assembly steps using the projected interaction buttons (presented in \cref{fig:interaction-pause,fig:interaction-seek,fig:interaction-first-0,fig:interaction-first-1}) until it completed the assembly process (starter motor after assembly shown in \cref{fig:assembled-object}). In the last assembly step the projection mapping system projected the outline of the expected starter motor geometry to help the operator perform a visual inspection in order to make sure that the final assembled object was mounted correctly (examples of the validation projections in \cref{fig:projection-mapping-1,fig:projection-mapping-2,fig:projection-mapping-3}). During this last step, the object recognition system detected and tracked the final assembled product while also updating the virtual 3D model in order to accurately render and project the outline of the starter engine into the workspace.
 
 \begin{figure}[H]
 	\begin{floatrow}[2]
 		\ffigbox[\FBwidth]
 		{\includegraphics[height=.176\textheight]{assembly-parts}}
-		{\caption{Starter engine parts and assembly tools}\label{fig:assembly-parts}}
+		{\caption{Starter motor parts and assembly tools}\label{fig:assembly-parts}}
 		\ffigbox[\FBwidth]
 		{\includegraphics[height=.176\textheight]{assembly}}
-		{\caption{Operator assembling starter engine}\label{fig:assembly}}
+		{\caption{Operator assembling starter motor}\label{fig:assembly}}
 	\end{floatrow}
 \end{figure}
-
-\begin{figure}[H]
-	\begin{floatrow}[2]
-		\ffigbox[\FBwidth]
-		{\includegraphics[height=.161\textheight]{assembled-object}}
-		{\caption{Starter engine assembled}\label{fig:assembled-object}}
-		\ffigbox[\FBwidth]
-		{\includegraphics[height=.161\textheight]{projection-mapping-1}}
-		{\caption{Projection of the reconstructed 3D model (texture colorized by surface normal curvature)}\label{fig:projection-mapping-1}}
-	\end{floatrow}
-\end{figure}
-
-\begin{figure}[H]
-	\begin{floatrow}[2]
-		\ffigbox[\FBwidth]
-		{\includegraphics[height=.2\textheight]{projection-mapping-2}}
-		{\caption{Object recognition and tracking for update of virtual models pose}\label{fig:projection-mapping-2}}
-		\ffigbox[\FBwidth]
-		{\includegraphics[height=.2\textheight]{projection-mapping-3}}
-		{\caption{Detailed view of the assembled object projection}\label{fig:projection-mapping-3}}
-	\end{floatrow}
-\end{figure}
-
 
 \begin{figure}[H]
 	\begin{floatrow}[4]
@@ -68,5 +49,27 @@ Our immersive teaching system was developed as a \gls{ros} Kinetic\footnote{\url
 		\ffigbox[\FBwidth]
 		{\includegraphics[height=.177\textheight]{interaction-first-1}}
 		{\caption{Visual feedback that the request to move to the first assembly step was recognized}\label{fig:interaction-first-1}}
+	\end{floatrow}
+\end{figure}
+
+\begin{figure}[H]
+	\begin{floatrow}[2]
+		\ffigbox[\FBwidth]
+		{\includegraphics[height=.161\textheight]{assembled-object}}
+		{\caption{Starter motor assembled}\label{fig:assembled-object}}
+		\ffigbox[\FBwidth]
+		{\includegraphics[height=.161\textheight]{projection-mapping-1}}
+		{\caption{Projection of the reconstructed 3D model (texture colorized using the surface normal curvature information)}\label{fig:projection-mapping-1}}
+	\end{floatrow}
+\end{figure}
+
+\begin{figure}[H]
+	\begin{floatrow}[2]
+		\ffigbox[\FBwidth]
+		{\includegraphics[height=.2\textheight]{projection-mapping-2}}
+		{\caption{Projection of the reconstructed 3D model after pose estimation from the object recognition system}\label{fig:projection-mapping-2}}
+		\ffigbox[\FBwidth]
+		{\includegraphics[height=.2\textheight]{projection-mapping-3}}
+		{\caption{Detailed view of the assembled object validation projection}\label{fig:projection-mapping-3}}
 	\end{floatrow}
 \end{figure}
