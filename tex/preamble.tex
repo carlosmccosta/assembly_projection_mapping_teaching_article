@@ -1,4 +1,7 @@
-\documentclass{llncs}
+\documentclass[10pt, conference, final, letterpaper, oneside, twocolumn]{IEEEtran}
+
+\IEEEoverridecommandlockouts
+%\overrideIEEEmargins
 
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -8,29 +11,38 @@
 \usepackage{grffile}
 \graphicspath{{figures/}}
 \usepackage{floatrow}
-%\usepackage{float}
-\usepackage{booktabs}
-\usepackage{tabu}
-\usepackage{rotating}
-\usepackage{array}
-\usepackage{multirow}
+%\usepackage{booktabs}
+%\usepackage{tabu}
+%\usepackage{rotating}
+%\usepackage{array}
+%\usepackage{multicol}
+%\usepackage{multirow}
+%\usepackage{showframe}
+\usepackage[draft=false,hyperfootnotes=true]{hyperref} %[draft,hidelinks]
+\usepackage[noadjust]{cite}
 \usepackage{url}
 \usepackage{footnote}
 \usepackage{footmisc}
-\usepackage[hidelinks]{hyperref} %[draft,hidelinks]
 \usepackage[all]{hypcap}
 \usepackage{amsmath}
 \usepackage[capitalise,noabbrev,nameinlink]{cleveref}
-\crefname{section}{Sect.}{Sect.}
-\Crefname{section}{Section}{Sections}
-\crefname{figure}{Fig.}{Fig.}
-\Crefname{figure}{Figure}{Figures}
 \usepackage[nonumberlist,acronym,nomain,nowarn]{glossaries}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
 \glsdisablehyper
-\makeglossaries
+
+\DeclareFloatSeparators{floatrowseparator}{\hspace{0.27em}}
+\floatsetup{floatrowsep=floatrowseparator}
 
 \makeatletter
 \g@addto@macro{\UrlBreaks}{\UrlOrds}
 \makeatother
 
-%\overfullrule=3mm
+\makeglossaries
+
+\overfullrule=6mm
+
+\renewcommand{\footnotesize}{\scriptsize}
+\newcommand{\vfrac}[2]{\frac{#1 \strut}{\strut #2}}
+%\setlength{\belowdisplayskip}{5pt} \setlength{\belowdisplayshortskip}{5pt}
+%\setlength{\abovedisplayskip}{5pt} \setlength{\abovedisplayshortskip}{5pt}
