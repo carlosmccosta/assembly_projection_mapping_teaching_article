@@ -22,51 +22,72 @@ Our immersive teaching system was developed as a \gls{ros}\footnote{\url{http://
 
 \subsection{Training session}
 
-The training session started by gathering all the assembly parts and the required tools for performing the starter motor assembly (shown in \cref{fig:assembly-parts}). Then using the immersive teaching system, the operator read the instructions, watched the videos (example in \cref{fig:assembly}) and navigated through the assembly steps using the projected interaction buttons (presented in \cref{fig:interaction-pause,fig:interaction-next,fig:interaction-seek}) until it completed the assembly process (starter motor after assembly shown in \cref{fig:assembled-object}). In the last assembly step the projection mapping system projected the outline of the expected starter motor geometry to help the operator perform a visual inspection in order to make sure that the final assembled object was mounted correctly (examples of the validation projections in \cref{fig:projection-mapping-1,fig:projection-mapping-2,fig:projection-mapping-3}, in which the \gls{cad} model was colorized using the surface curvature). During this last step, the object recognition system detected and tracked the final assembled product while also updating the virtual 3D model in order to accurately render and project the outline of the starter engine into the workspace.
+The training session started by gathering all the assembly parts and the required tools for performing the starter motor assembly (shown in \cref{fig:assembly-parts}). Then using the proposed immersive teaching system, the operator read the instructions, watched the videos and navigated through the assembly steps using the projected interaction buttons (displayed in \cref{fig:interaction-pause,fig:interaction-next,fig:interaction-seek}) until it completed the assembly process. Namely, the operator started by assembling the brushes into the brush holder (seen in \cref{fig:step2}) and then bended the braided cables for ensuring that the brushes were perpendicular to the armature, that was assembled later on (shown in \cref{fig:step3}). These kind of operations that involve flexible parts with cables and rubbers are very hard to automate with robotic manipulators, and as such, are the ideal candidate for being assigned to operators. On the other hand, assembly steps that deal with large and rigid parts can be delegated to robots, which is the case of step 4 (displayed in \cref{fig:step4}), in which the operator assembled and screwed the rear bracket and attached the large cylindrical yoke. This way, the operator could be performing steps 5 to 8 in parallel, which involve the lower section of the starter motor while the robot was finishing the assembly of the top section. The step 5 included the placement of the large bottom bracket on top of a fixture for holding it vertically, followed by the assembly of the clutch and shift lever (presented in \cref{fig:step5}). Then, step 6 included the assembly of the 3 planetary gears (shown in \cref{fig:step6}) while in step 7 the plunger and several isolation rubbers were installed (displayed in \cref{fig:step7}). Later on, the plunger spring and its magnetic switch were attached to the lower section of the starter motor (as seen in \cref{fig:step8}). Finally, the lower and upper section of the starter motor were joined and screwed together (presented in \cref{fig:step9}), followed by a visual inspection of the assembled product (seen in \cref{fig:step10,fig:projection-mapping-2,fig:projection-mapping-3}).
 
-\begin{figure}[ht]
+For helping the operator during the final inspection phase, the proposed \gls{sar} system estimated the 6 \gls{dof} pose of the starter motor and then projected its expected outline on top of it. The main purpose of this final stage was to test the accuracy of the proposed \gls{sar} system. Namely, to evaluate if the proposed \gls{sar} system was able to achieve a good overlap between the physical and virtual objects. This would implicitly confirm that the approach proposed to model the 3D camera within Gazebo along with the subsystems that influence the rendering of the starter motor outline (calibration of the projector, cameras and 3D sensors along with 6 \gls{dof} pose estimator) were suitable for achieving a usable \gls{sar} system. Looking at \cref{fig:step10,fig:projection-mapping-2,fig:projection-mapping-3}, the overall overlap error seems to be below 2 mm, making the proposed \gls{sar} system ready to be applied to other use cases and be used as a starting point for developers wanting to incorporate \gls{sar} into their products, such as cooperative workstations in which operators and robots work side by side.
+
+\begin{figure}[H]
 	\begin{floatrow}[2]
 		\ffigbox[\FBwidth]
-		{\includegraphics[height=.098\textheight]{assembly-parts}}
-		{\caption{Starter motor parts and assembly tools}\label{fig:assembly-parts}}
+		{\includegraphics[height=.103\textheight]{steps/1}}
+		{\caption{Step 1 - starter motor parts and assembly tools}\label{fig:assembly-parts}}
 		\ffigbox[\FBwidth]
-		{\includegraphics[height=.098\textheight]{assembly-2}}
-		{\caption{Operator assembling starter motor}\label{fig:assembly}}
+		{\includegraphics[height=.103\textheight]{steps/2}}
+		{\caption{Step 2 - assembly of the brush holder}\label{fig:step2}}
 	\end{floatrow}
 \end{figure}
 
-\begin{figure}[ht]
-	\begin{floatrow}[3]
+\begin{figure}[H]
+	\begin{floatrow}[2]
 		\ffigbox[\FBwidth]
-		{\includegraphics[height=.15\textheight]{interaction-pause}}
-		{\caption{Example of video play / pause interaction}\label{fig:interaction-pause}}
+		{\includegraphics[height=.103\textheight]{steps/3}}
+		{\caption{Step 3 - assembly of the brushes into the armature}\label{fig:step3}}
 		\ffigbox[\FBwidth]
-		{\includegraphics[height=.15\textheight]{interaction-next}}
-		{\caption{Visual highlight of the request to move to the next assembly step}\label{fig:interaction-next}}
-		\ffigbox[\FBwidth]
-		{\includegraphics[height=.15\textheight]{interaction-seek-2}}
-		{\caption{Example of video seek interaction}\label{fig:interaction-seek}}
+		{\includegraphics[height=.103\textheight]{steps/4}}
+		{\caption{Step 4 - assembly of the rear bracket and yoke}\label{fig:step4}}
 	\end{floatrow}
 \end{figure}
 
-\begin{figure}[ht]
+\begin{figure}[H]
 	\begin{floatrow}[2]
 		\ffigbox[\FBwidth]
-		{\includegraphics[height=.097\textheight]{assembled-object}}
-		{\caption{Starter motor assembled}\label{fig:assembled-object}}
+		{\includegraphics[height=.103\textheight]{steps/5}}
+		{\caption{Step 5 - assembly of the front bracket, clutch and shift lever}\label{fig:step5}}
 		\ffigbox[\FBwidth]
-		{\includegraphics[height=.097\textheight]{projection-mapping-1}}
-		{\caption{Projection of the reconstructed 3D model}\label{fig:projection-mapping-1}}
+		{\includegraphics[height=.103\textheight]{steps/6}}
+		{\caption{Step 6 - assembly of the planetary gears}\label{fig:step6}}
 	\end{floatrow}
 \end{figure}
 
-\begin{figure}[ht]
+\begin{figure}[H]
 	\begin{floatrow}[2]
 		\ffigbox[\FBwidth]
-		{\includegraphics[height=.119\textheight]{projection-mapping-2}}
-		{\caption{Projection of the reconstructed 3D model after pose estimation from the object recognition system}\label{fig:projection-mapping-2}}
+		{\includegraphics[height=.103\textheight]{steps/7}}
+		{\caption{Step 7 - assembly of the plunger and rubbers}\label{fig:step7}}
 		\ffigbox[\FBwidth]
-		{\includegraphics[height=.119\textheight]{projection-mapping-3}}
-		{\caption{Detailed view of the assembled object validation projection}\label{fig:projection-mapping-3}}
+		{\includegraphics[height=.103\textheight]{steps/8}}
+		{\caption{Step 8 - assembly of the plunger spring and magnetic switch}\label{fig:step8}}
+	\end{floatrow}
+\end{figure}
+
+\begin{figure}[H]
+	\begin{floatrow}[2]
+		\ffigbox[\FBwidth]
+		{\includegraphics[height=.103\textheight]{steps/9}}
+		{\caption{Step 9 - assembly of the armature and its bolts}\label{fig:step9}}
+		\ffigbox[\FBwidth]
+		{\includegraphics[height=.103\textheight]{steps/10}}
+		{\caption{Step 10 - visual inspection of the assembled product}\label{fig:step10}}
+	\end{floatrow}
+\end{figure}
+
+\begin{figure}[H]
+	\begin{floatrow}[2]
+		\ffigbox[\FBwidth]
+		{\includegraphics[height=.115\textheight]{projection-mapping-2}}
+		{\caption{Detailed view of the validation projection for the inspection phase}\label{fig:projection-mapping-2}}
+		\ffigbox[\FBwidth]
+		{\includegraphics[height=.115\textheight]{projection-mapping-3}}
+		{\caption{Projection of the outline of the reconstructed 3D model after 6 DoF pose estimation}\label{fig:projection-mapping-3}}
 	\end{floatrow}
 \end{figure}
