@@ -9,44 +9,22 @@ Over the years, several projection technologies were developed according to the 
 
 For video projection mapping purposes, reflective projectors are better suited than the remaining technologies given their ability to create images with smaller gaps between the projected pixels (smoother images) and they also have higher contrast, better color accuracy / uniformity, much fewer dead pixels and the image quality does not degrade over time. The main stages of the image creation in a \gls{dlp} projector are show in \cref{fig:dlp-projector-diagram-dmd}. The first phase is the generation of light from either a lamp or a \gls{led} / laser array, which is later on condensed on a lens in order to pass through a moving color wheel to become one of the 3 primary additive colors (red, green, blue). The colored light then passes through a shaping lens and hits a \gls{dmd} which has an electronic controllable mirror for each projection pixel that either reflects the light into the projection lens or into a heat sink. Color shading is achieved by controlling how long and how often the micro mirrors in the \gls{dmd} are reflecting each light color into the lens or into the heat sink.
 
-The mathematical modeling of a \gls{dlp} projector can be seen as an inverse pinhole camera due to the grid disposition of the mirrors in the \gls{dmd} and the very low distortion that modern \gls{dlp} projectors have. As such, rendering of 3D virtual environments can be performed efficiently using the \gls{opengl} projection matrix\footnote{\url{http://ksimek.github.io/2013/06/03/calibrated\_cameras\_in\_opengl}} (presented in \cref{eq:projection-matrix}).
+The mathematical modeling of a \gls{dlp} projector can be seen as an inverse pinhole camera (diagram shown in \cref{fig:camera-intrinsics-2}) due to the grid disposition of the mirrors in the \gls{dmd} and the very low distortion that modern \gls{dlp} projectors have. As such, rendering of 3D virtual environments can be performed efficiently using an extended version of the \gls{opengl} projection matrix\footnote{\url{http://ksimek.github.io/2013/06/03/calibrated\_cameras\_in\_opengl}} (presented in \cref{eq:projection-matrix}).
 
-It incorporates a matrix for perspective projection (\cref{eq:perspective-matrix}) that models the camera intrinsic parameters \cite{Hartley2003} (in pixel units), such as
-the focal lengths (Fx, Fy), principal point (Cx, Cy) and axis skew (S).
-
-Moreover, it includes a matrix for mapping a truncated pyramid frustum into a \gls{ndc} (shown in \cref{fig:ndc} and \cref{eq:ndc-matrix}) that has the XYZ values in the range [-1,1]. This mapping uses the image width and height (in pixel units) along with a near and far plane (in world units).
-
-is performed to
-simplify clipping operations -> 6 thresholds
-(only the geometry within the \gls{ndc} cube will be used for generating the final image)
-resolution and fov independent
-
-in OpenGL the image plane is located on the near clipping plane 
-
-For simplifying the projection of 3D points into the near plane using the properties of similar triangles (shown in TODO), the Z coordinate needs to be inverted in order to be positive (because in \gls{opengl} the camera is looking along the Z- axis, as seen in \cref{fig:ndc}).
-
-the sign of the third column of \cref{eq:perspective-matrix} needed to be inverted for converting the right-hand coordinate system of the \gls{opengl} camera space to the left-hand coordinate system of the \gls{opengl} \gls{ndc} space.
-
-The \cref{eq:ndc-matrix} assumes that the image coordinates origin has the origin on the top left corner, with the X+ axis going from left to right and the Y+ axis moving from top to bottom.
-
-%the fact that the \gls{opengl} world space coordinates uses a right-hand coordinate system while the \gls{opengl} \gls{ndc} space uses a left-hand coordinate system
-%\gls{opengl} camera looks down along the negative Z axis (as seen in \cref{fig:ndc}), while in most computer vision libraries used to compute the camera intrinsic parameters, such as OpenCV calib3d module in which the camera looks along the positive Z axis (diagram in \cref{fig:camera-intrinsics}).
-
-The correction of lens distortion for \gls{dlp} projectors, even thought being relatively small, can be done in a post-processing stage after 3D rendering, and typically uses 3 coefficients for removing radial distortions and 2 coefficients for accounting for the tangential distortions.
-
+The perspective projection of vertex data is one of the pivotal stages in any rendering engine and is responsible from converting 3D geometry from the camera space into the clipping space (as depicted in \cref{fig:opengl-mvp,fig:gl-projection-matrix}). This matrix is usually created using the $glOrtho$ function (matrix shown in \cref{eq:glOrtho}) for orthographic projection or the $glFrustum$ (matrix presented in \cref{eq:glFrustum}) for perspective projection. Looking at both matrices, we can see that the $glFrustum$ can be decomposed to include the $glFrustum$ matrix and a $Q$ matrix (shown in \cref{eq:Q}) that corresponds to the intrinsic parameters of a pinhole camera with the same focal length for the X and Y axis, the principal point at the center of the image and no axis skew. The main difference between the $Q$ matrix and the traditional $K$ matrix \cite{Hartley2003} (shown in \cref{eq:k}) is the bottom row of $Q$, in which the $w$ component of the homogeneous matrix was set to the -Z coordinate. This is a matrix optimization associated with the perspective z-divide that is required to convert 4D homogeneous coordinates to 3D Cartesian coordinates. It has a negative sign because by default the \gls{opengl} camera is setup to look along the -Z axis (as can be seen in \cref{fig:gl-projection-matrix}), and to simplify and optimize the calculations using the similar triangles properties (displayed in \cref{fig:similar-triangles}), the Z coordinate needs to be negated for having a positive value. Looking at \cref{eq:k2}, it can be seen that $K$ can be easily adapted to take this implementation detail into consideration, which allows to extend the $Q$ matrix with the intrinsics parameters estimated by the OpenCV $calib3d$ module. Namely, $Q$ can be extended (as shown in \cref{eq:q2}) to support pinhole cameras with different focal lengths for the X and Y axis ($Fx$ and $Fy$), have an arbitrary axis skew ($S$) and non-centered principal point ($Cx$ and $Cy$). Moreover, the $glOrtho$ matrix can be simplified for this particular use case (as seen in \cref{eq:glOrtho2}), in order to optimize the creation of the extended \gls{opengl} perspective projection matrix that takes into consideration the full camera intrinsics shown in \cref{eq:k}. This extension to the default \gls{opengl} projection matrix is of critical importance for being able to model video projectors as \gls{opengl} cameras, because unlike normal cameras that have the principal point close the image center, video projectors have the principal point at the bottom of the image. As such, \gls{sar} systems must take great care when generating the image that will be projected, otherwise the overlap error between the physical and virtual objects will be too much for making the system usable. The correction of lens distortion typically uses 3 coefficients for removing radial distortions and 2 coefficients for accounting for the tangential distortions. Even thought being relatively small in \gls{dlp} projectors, they can be removed in a post-processing stage after 3D rendering or using a shader in the new \gls{opengl} \gls{api}.
 
 \begin{figure}[!ht]
 	\centering
-	\includegraphics[height=.17\textheight]{dlp-projector-diagram-dmd}
+	\includegraphics[height=.13\textheight]{dlp-projector-diagram-dmd}
 	\caption[Single chip \glsentrytext{dlp} diagram]{Single chip \glsentrytext{dlp} diagram\protect\footnotemark}
 	\label{fig:dlp-projector-diagram-dmd}
 \end{figure}
 
 \begin{figure}[!ht]
 	\centering
-	\includegraphics[height=.22\textheight]{camera-intrinsics-2}
+	\includegraphics[height=.185\textheight]{camera-intrinsics-2}
 	\caption[Pinhole camera model used in OpenCV calib3d module]{Pinhole camera model used in OpenCV calib3d module\protect\footnotemark}
-	\label{fig:camera-intrinsics}
+	\label{fig:camera-intrinsics-2}
 \end{figure}
 
 \begin{figure}[!ht]
@@ -58,14 +36,14 @@ The correction of lens distortion for \gls{dlp} projectors, even thought being r
 
 \begin{figure}[!ht]
 	\centering
-	\includegraphics[height=.15\textheight]{gl-projection-matrix}
-	\caption[{\glsentrytext{opengl} perspective frustum in camera space (left) with the associated \glsentrytext{ndc} cube in clipping space}]{{\glsentrytext{opengl} perspective frustum in camera space (left) with the associated \glsentrytext{ndc} cube in clipping space}\protect\footnotemark}
-	\label{fig:ndc}
+	\includegraphics[height=.12\textheight]{gl-projection-matrix}
+	\caption[{\glsentrytext{opengl} perspective frustum (left) with the associated \glsentrytext{ndc} cube}]{{\glsentrytext{opengl} perspective frustum (left) with the associated \glsentrytext{ndc} cube}\protect\footnotemark}
+	\label{fig:gl-projection-matrix}
 \end{figure}
 
 \begin{figure}[!ht]
 	\centering
-	\includegraphics[width=.99\textwidth]{similar-triangles}
+	\includegraphics[width=.7\textwidth]{similar-triangles}
 	\caption[Similar triangles properties diagram]{Similar triangles properties diagram\protect\footnotemark}
 	\label{fig:similar-triangles}
 \end{figure}
@@ -141,7 +119,7 @@ The correction of lens distortion for \gls{dlp} projectors, even thought being r
 		\end{bmatrix}
 	\end{equation}
 
-	\begin{equation}\label{eq:perspective-matrix}
+	\begin{equation}\label{eq:q2}
 		Q'{=}
 		\begin{bmatrix}
 			Fx & S & -Cx & 0 \\[\smallskipamount]
@@ -151,7 +129,7 @@ The correction of lens distortion for \gls{dlp} projectors, even thought being r
 		\end{bmatrix}
 	\end{equation}
 
-	\begin{equation}\label{eq:ndc-matrix}
+	\begin{equation}\label{eq:glOrtho2}
 		glOrtho'{=}
 		\begin{bmatrix}
 			\vfrac{2}{IWidth} & 0 & 0 & -1 \\[\smallskipamount]
@@ -199,11 +177,11 @@ After having the intrinsic parameters of the camera and projector along with the
 For achieving accurate projection mapping, the Gazebo simulator\footnote{\url{http://gazebosim.org}} camera implementation was improved to allow the setting of a custom projection matrix in order to perform 3D rendering with a camera model that takes into account the projector intrinsic parameters. Moreover, it was added the possibility to dynamically change image, video and text during runtime for allowing the display of the relevant information for each assembly step.
 For efficient 3D scene rendering, the Gazebo simulator relies on the cross platform open source Ogre3D graphics engine\footnote{\url{http://www.ogre3d.org}}, that in turn uses the \gls{opengl} \gls{gpu} \gls{api} to take advantage of the massively parallel graphics cards currently available to generate raster images for the \gls{dlp} projector (example of a rendered scene for the last assembly step in \cref{fig:scene-rendering}).
 
-For user interface, the Gazebo simulator has a Qt\footnote{\url{https://www.qt.io/}} \gls{gui} that allows visual inspection of the scene while also giving the option to add new objects or move and rotate existing models. Moreover, for lightweight rendering, it can also start in server mode without a \gls{gui}.
+For user interface, the Gazebo simulator has a Qt\footnote{\url{https://www.qt.io}} \gls{gui} that allows visual inspection of the scene while also giving the option to add new objects or move and rotate existing models. Moreover, for lightweight rendering, it can also start in server mode without a \gls{gui}.
 
 \begin{figure}[ht]
 	\centering
-	\includegraphics[width=0.9\linewidth]{scene-rendering}
+	\includegraphics[width=0.99\linewidth]{scene-rendering}
 	\caption{3D scene rendering using the Gazebo simulator}
 	\label{fig:scene-rendering}
 \end{figure}
@@ -262,22 +240,11 @@ The last step of the assembly process includes a visual inspection stage perform
 
 \begin{figure}[!ht]
 	\centering
-	\includegraphics[height=.122\textheight]{object-reconstruction-front}
-	\includegraphics[height=.122\textheight]{object-reconstruction-back}
+	\includegraphics[height=.142\textheight]{object-reconstruction-front}
+	\includegraphics[height=.142\textheight]{object-reconstruction-back}
 	\caption{3D model of the starter motor reconstructed using the David Laser structured light 3D scanner}
 	\label{fig:object-reconstruction}
 \end{figure}
-
-%\begin{figure}[H]
-%	\begin{floatrow}[2]
-%		\ffigbox[\FBwidth]
-%		{\includegraphics[height=.082\textheight]{mitsubishi-m000t20873-front}\includegraphics[height=.082\textheight]{mitsubishi-m000t20873-back}}
-%		{\caption{Mitsubishi M000T20873 starter motor}\label{fig:starter-motor}}
-%		\ffigbox[\FBwidth]
-%		{\includegraphics[height=.082\textheight]{object-reconstruction-front}\includegraphics[height=.082\textheight]{object-reconstruction-back}}
-%		{\caption{3D model of the starter motor reconstructed using a structured light scanner}\label{fig:object-reconstruction}}
-%	\end{floatrow}
-%\end{figure}
 
 
 
