@@ -11,12 +11,12 @@ The mathematical modeling of a video projector can be seen as an inverse pinhole
 
 The perspective projection of vertex data is a pivotal stage in any rendering engine. In \gls{opengl}, the projection matrix is one of the 4 main vertex transform stages (presented in \cref{fig:opengl-mvp}) and is responsible for converting 3D geometry from the camera space into the clipping space (as depicted in \cref{fig:gl-projection-matrix}). This matrix can be created using the $glOrtho$ function (matrix shown in \cref{eq:glOrtho}) for orthographic projection or the $glFrustum$ function (matrix presented in \cref{eq:glFrustum}) for perspective projection. Looking at both matrices we can see that the $glFrustum$ can be decomposed to include the $glOrtho$ matrix and a $Q$ matrix (shown in \cref{eq:Q}) that corresponds to the intrinsic parameters of a pinhole camera with the same focal length for the X and Y axis along with the principal point at the origin of the camera coordinate system and no axis skew. The main difference between the $Q$ matrix and the traditional $K$ matrix \cite{Hartley2003} (shown in \cref{eq:k}) is the bottom row of $Q$, in which the $w$ component of the homogeneous matrix was set to the -Z coordinate. This is a matrix optimization associated with the perspective z-divide that is required to convert 4D homogeneous coordinates to 3D Cartesian coordinates. It has a negative sign because by default the \gls{opengl} camera is setup to look along the -Z axis (as can be seen in \cref{fig:gl-projection-matrix}), and to simplify and optimize the calculations using the similar triangles properties (displayed in \cref{fig:similar-triangles}), the Z coordinate needs to be negated for having a positive value. Looking at \cref{eq:k2}, it can be seen that $K$ can be adapted to take this sign inversion into consideration, allowing to map the $K'$ values into the $Q$ matrix. On the other hand, for being able to bridge between the intrinsics parameters estimated by the OpenCV $calib3d$ module ($K$) and the underlying \gls{opengl} implementation, the relative orientation of their respective cameras must also be taken into account. Namely, switching from the reference system in \cref{fig:camera-intrinsics-2} to the one on left side of \cref{fig:gl-projection-matrix} requires the adjustment of the principal point in the Y axis (because in OpenGL the Y+ goes up and in OpenCV the Y+ goes down, which results in $Cy'=ImageHeight-Cy$). The other intrinsic parameters are not affected and can be mapped directly into the extended $Q$ matrix shown in \cref{eq:q2}, allowing the usage of the \gls{opengl} rendering pipeline to model pinhole cameras with different focal lengths for the X and Y axis ($Fx$ and $Fy$) while also supporting arbitrary axis skew ($S$) and non-centered principal point ($Cx$ and $Cy$). On this particular use case, $Left=0$ and $Bottom=0$, and as such, the $glOrtho$ matrix can be simplified (as seen in \cref{eq:glOrtho2}) for optimizing the creation of the extended \gls{opengl} perspective projection matrix that takes into consideration the full camera intrinsics shown in \cref{eq:k}. The correction of lens distortion typically uses 3 coefficients for removing radial distortions and 2 coefficients for accounting for the tangential distortions. Despite being relatively small in \gls{dlp} projectors, they can be removed using an \gls{opengl} vertex shader or in a post-processing stage after 3D rendering using the OpenCV calib3d module.
 
-This extension to the default \gls{opengl} projection matrix is of critical importance for being able to model video projectors as \gls{opengl} cameras because unlike normal cameras that have the principal point close to the image center, projectors normally have the principal point around the bottom of the image. This is done using lens shift\footnote{\url{https://www.projectorpeople.com/resources/lens_shift.asp}} to make the projector installation easier. This way the projector can be installed parallel to a table / ceiling and its projection will not intersect the table / ceiling. The alternative would be to incline the projector, but that approach would make the installation harder and would also require image distortion correction to ensure that the projection area would remain squared (this keystone correction would also waste projection pixels, which is undesirable).
+This extension to the default \gls{opengl} projection matrix is of critical importance for being able to model video projectors as \gls{opengl} cameras because unlike normal cameras that have the principal point close to the image center, projectors normally have the principal point around the bottom of the image. This is due to the fact that projector lens are assembled slightly tilted for redirecting the projection light upwards. This way the projector can be installed parallel to a table / ceiling and its projected image will not intersect the table / ceiling. In higher end projectors, the lens shift\footnote{\url{https://www.projectorpeople.com/resources/lens_shift.asp}} can even be adjusted after the projector is manufactured, making its installation even more flexible (diagram in \cref{fig:lens-shift--keystone}). The lower cost alternative to lens shift is digital keystone correction, but this approach distorts the image and wastes projection pixels.
 %As such, \gls{sar} systems must take great care when generating the image that will be projected, otherwise the overlap error between the physical and virtual objects will be too much for making the system usable.
-\vspace{-0.6em}
+\vspace{-0.2em}
 \begin{figure}[H]
 	\centering
-	\includegraphics[height=.11\textheight]{dlp-projector-diagram-dmd}
+	\includegraphics[height=.135\textheight]{dlp-projector-diagram-dmd}
 	\caption[Diagram of a single chip \glsentrytext{dlp} projector]{Diagram of a single chip \glsentrytext{dlp} projector\protect\footnotemark}
 	\label{fig:dlp-projector-diagram-dmd}
 	\vspace{-0.7em}
@@ -24,38 +24,43 @@ This extension to the default \gls{opengl} projection matrix is of critical impo
 \vspace{-0.9em}
 \begin{figure}[H]
 	\centering
-	\includegraphics[height=.11\textheight]{camera-intrinsics-2}
-	\caption[Pinhole camera model used in OpenCV calib3d module]{Pinhole camera model used in OpenCV calib3d module\protect\footnotemark}
-	\label{fig:camera-intrinsics-2}
+	\includegraphics[width=.9\textwidth]{lens-shift--keystone}
+	\caption[Diagram of lens shift (left) and keystone correction (right)]{Diagram of lens shift (left) and keystone correction (right)\protect\footnotemark}
+	\label{fig:lens-shift--keystone}
 	\vspace{-0.7em}
 \end{figure}
 \vspace{-0.7em}
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=.86\textwidth]{opengl-mvp}
+	\includegraphics[width=.94\textwidth]{opengl-mvp}
 	\caption[OpenGL rendering pipeline]{OpenGL rendering pipeline\protect\footnotemark}
 	\label{fig:opengl-mvp}
 	\vspace{-0.7em}
 \end{figure}
 \vspace{-0.7em}
 \begin{figure}[H]
-	\centering
-	\includegraphics[height=.1\textheight]{gl-projection-matrix}
-	\caption[{\glsentrytext{opengl} perspective frustum (left) with the associated \glsentrytext{ndc} cube}]{{\glsentrytext{opengl} perspective frustum (left) with the associated \glsentrytext{ndc} cube}\protect\footnotemark}
-	\label{fig:gl-projection-matrix}
-	\vspace{-0.7em}
+	\begin{floatrow}[2]
+		\ffigbox[\FBwidth]
+		{\includegraphics[height=.13\textheight]{camera-intrinsics-2}}
+		{\caption[Pinhole camera model used in OpenCV calib3d module]{Pinhole camera model used in OpenCV calib3d module\footnotemark}\label{fig:camera-intrinsics-2}}
+		\hspace{0.05em}
+		\ffigbox[\FBwidth]
+		{\includegraphics[height=.08\textheight]{gl-projection-matrix}}
+		{\caption[{\glsentrytext{opengl} perspective frustum (left) with the associated \glsentrytext{ndc} cube}]{{\glsentrytext{opengl} perspective frustum (left) with the associated \glsentrytext{ndc} cube}\protect\footnotemark}\label{fig:gl-projection-matrix}}
+	\end{floatrow}
 \end{figure}
 \vspace{-0.7em}
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=.5\textwidth]{similar-triangles}
+	\includegraphics[width=.65\textwidth]{similar-triangles}
 	\caption[Diagram showing the similar triangles properties]{Diagram showing the similar triangles properties\protect\footnotemark}
 	\label{fig:similar-triangles}
 	\vspace{-0.7em}
 \end{figure}
 \vspace{-0.7em}
 
-\footnotetext[\numexpr\value{footnote}-4]{\url{https://vimeo.com/blog/post/display-tech-home-projectors}}
+\footnotetext[\numexpr\value{footnote}-5]{\url{https://vimeo.com/blog/post/display-tech-home-projectors}}
+\footnotetext[\numexpr\value{footnote}-4]{\url{http://www.theprojectorexpert.com/projector-lens-shift}}
 \footnotetext[\numexpr\value{footnote}-3]{\url{https://docs.opencv.org/master/d9/d0c/group__calib3d.html}}
 \footnotetext[\numexpr\value{footnote}-2]{\url{https://www.ntu.edu.sg/home/ehchua/programming/opengl/CG_BasicsTheory.html}}
 \footnotetext[\numexpr\value{footnote}-1]{\url{http://www.songho.ca/opengl/gl_projectionmatrix.html}}
@@ -64,7 +69,7 @@ This extension to the default \gls{opengl} projection matrix is of critical impo
 
 {
 	\setlength\arraycolsep{.15em}
-	\scriptsize
+	\tiny
 
 	\begin{equation}\label{eq:glOrtho}
 		glOrtho{=}
