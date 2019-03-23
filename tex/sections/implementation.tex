@@ -9,18 +9,21 @@ Over the years, several projection technologies were developed according to the 
 
 Despite the wide range of technologies and hardware configurations (example for \gls{dlp} shown in \cref{fig:dlp-projector-diagram-dmd}), the output of a video projector can be seen as an inverse pinhole camera (diagram shown in \cref{fig:camera-intrinsics-2}) due to the grid disposition of the projected image and the very low distortion that modern projectors have. As such, rendering of 3D virtual environments for spatial augmented reality can be performed efficiently using an extended version of the \gls{opengl} projection matrix\footnote{\url{http://ksimek.github.io/2013/06/03/calibrated\_cameras\_in\_opengl}} (presented in \cref{eq:projection-matrix}).
 
+\vspace{-0.5em}
 \begin{figure}[H]
 	\centering
-	\includegraphics[height=.135\textheight]{dlp-projector-diagram-dmd}
+	\includegraphics[height=.145\textheight]{dlp-projector-diagram-dmd}
 	\caption[Diagram of a single chip \glsentrytext{dlp} projector]{Diagram of a single chip \glsentrytext{dlp} projector\protect\footnotemark}
 	\label{fig:dlp-projector-diagram-dmd}
 	\vspace{-0.7em}
 \end{figure}
 \footnotetext[\numexpr\value{footnote}]{\url{https://vimeo.com/blog/post/display-tech-home-projectors}}
+\vspace{-0.8em}
 
 The extension of the default \gls{opengl} projection matrix is of critical importance for being able to model video projectors as \gls{opengl} cameras because unlike normal cameras that have a centered lens (which results in a principal point close to the image center), projectors normally have an off-centered lens (causing the principal point to be around the bottom of the image). This is due to the fact that projector lenses are assembled slightly tilted for redirecting the projection light upwards. This way the projector can be installed almost parallel to a table / ceiling and its projected image will not intersect the table / ceiling. In higher-end projectors, the lens shift\footnote{\url{https://www.projectorpeople.com/resources/lens_shift.asp}} can even be adjusted after the projector is manufactured, making its installation more flexible (diagram in \cref{fig:lens-shift--keystone}). The lower cost alternative to lens shift is keystone correction, but this approach is typically avoided in \gls{sar} systems since it distorts the image and wastes projection pixels.
 %As such, \gls{sar} systems must take great care when generating the image that will be projected, otherwise the overlap error between the physical and virtual objects will be too much for making the system usable.
 
+\vspace{-0.5em}
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=.8\textwidth]{lens-shift--keystone}
@@ -29,9 +32,11 @@ The extension of the default \gls{opengl} projection matrix is of critical impor
 	\vspace{-0.7em}
 \end{figure}
 \footnotetext[\numexpr\value{footnote}]{\url{http://www.theprojectorexpert.com/projector-lens-shift}}
+\vspace{-1em}
 
 The perspective projection of vertex data is a pivotal stage in any rendering engine. In \gls{opengl}, the projection matrix is one of the 4 main vertex transform stages (presented in \cref{fig:opengl-mvp}) and is responsible for converting 3D geometry from the camera space into the clipping space (as depicted in \cref{fig:gl-projection-matrix}). This matrix can be created using the $glOrtho$ function (matrix shown in \cref{eq:glOrtho}) for orthographic projection or the $glFrustum$ function (matrix presented in \cref{eq:glFrustum}) for perspective projection. Looking at both matrices it can be seen that the $glFrustum$ can be decomposed to include the $glOrtho$ matrix and a $Q$ matrix (shown in \cref{eq:Q}) that corresponds to the intrinsic parameters of a pinhole camera with the same focal length for the $X$ and $Y$ axis along with the principal point at the origin of the camera coordinate system and no axis skew. The main difference between the $Q$ matrix and the traditional $K$ matrix \cite{Hartley2003} (shown in \cref{eq:k}) is the bottom row of $Q$, in which the $w$ component of the homogeneous matrix was set to the $-Z$ coordinate. This is a matrix optimization associated with the perspective z-divide that is required to convert 4D homogeneous coordinates to 3D Cartesian coordinates. It has a negative sign because by default the \gls{opengl} camera is setup to look along the $-Z$ axis (as can be seen in \cref{fig:gl-projection-matrix}), and to simplify and optimize the calculations using the similar triangles properties (displayed in \cref{fig:similar-triangles}), the $Z$ coordinate needs to be negated for having a positive value. Looking at \cref{eq:k2}, it can be seen that $K$ can be adapted to take this sign inversion into consideration, allowing to map the $K'$ values into the $Q$ matrix.
 
+\vspace{-0.3em}
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=.99\textwidth]{opengl-mvp}
@@ -40,6 +45,7 @@ The perspective projection of vertex data is a pivotal stage in any rendering en
 	\vspace{-0.7em}
 \end{figure}
 \footnotetext[\numexpr\value{footnote}]{\url{https://www.ntu.edu.sg/home/ehchua/programming/opengl/CG_BasicsTheory.html}}
+\vspace{-1em}
 
 On the other hand, for being able to bridge between the intrinsic parameters estimated by the OpenCV $calib3d$ module ($K$) and the underlying \gls{opengl} implementation, the relative orientation of their respective cameras must also be taken into account. Namely, switching from the reference system in \cref{fig:camera-intrinsics-2} to the one on left side of \cref{fig:gl-projection-matrix} requires the adjustment of the principal point in the $Y$ axis (because in OpenGL the $Y+$ goes up and in OpenCV the $Y+$ goes down, which results in $Cy'=ImageHeight-Cy$). The other intrinsic parameters are not affected and can be mapped directly into the extended $Q$ matrix shown in \cref{eq:q2}, allowing the usage of the \gls{opengl} rendering pipeline to model pinhole cameras with different focal lengths for the $X$ and $Y$ axis ($Fx$ and $Fy$) while also supporting arbitrary axis skew ($S$) and non-centered principal point ($Cx$ and $Cy$). On this particular use case, the \gls{opengl} frustum clipping planes were defined as $Near=0.1\ meters, Far=5.0\ meters$, and since $Left=0\ pixels, Bottom=0\ pixels$, the $glOrtho$ matrix can be simplified (as seen in \cref{eq:glOrtho2}) for optimizing the creation of the extended \gls{opengl} perspective projection matrix that takes into consideration the full camera intrinsic parameters shown in \cref{eq:k}.
 
@@ -49,21 +55,23 @@ The correction of lens distortion typically uses 3 coefficients for removing rad
 	\begin{floatrow}[2]
 		\ffigbox[\FBwidth]
 		{\includegraphics[height=.13\textheight]{camera-intrinsics-2}}
-		{\caption[Pinhole camera model used in the OpenCV calib3d module]{Pinhole camera model used in OpenCV calib3d module\footnotemark}\label{fig:camera-intrinsics-2}}
+		{\caption[Pinhole camera model used in the OpenCV calib3d module]{Pinhole camera model used in OpenCV calib3d module\footnotemark}\label{fig:camera-intrinsics-2}\vspace{-0.5em}}
 		\hspace{0.03em}
 		\ffigbox[\FBwidth]
 		{\includegraphics[height=.104\textheight]{gl-projection-matrix}}
-		{\caption[{\glsentrytext{opengl} perspective frustum (left) with the associated \glsentrytext{ndc} cube}]{{\glsentrytext{opengl} perspective frustum (left) with the associated \glsentrytext{ndc} cube}\protect\footnotemark}\label{fig:gl-projection-matrix}}
+		{\caption[{\glsentrytext{opengl} perspective frustum (left) with the associated \glsentrytext{ndc} cube}]{{\glsentrytext{opengl} perspective frustum (left) with the associated \glsentrytext{ndc} cube}\protect\footnotemark}\label{fig:gl-projection-matrix}\vspace{-0.5em}}
 	\end{floatrow}
 \end{figure}
+
 \vspace{-0.7em}
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=.85\textwidth]{similar-triangles}
 	\caption[Diagram showing the similar triangles properties]{Diagram showing the similar triangles properties\protect\footnotemark}
 	\label{fig:similar-triangles}
-	\vspace{-0.7em}
+	\vspace{-0.5em}
 \end{figure}
+
 \vspace{-0.7em}
 \footnotetext[\numexpr\value{footnote}-2]{\url{https://docs.opencv.org/master/d9/d0c/group__calib3d.html}}
 \footnotetext[\numexpr\value{footnote}-1]{\url{http://www.songho.ca/opengl/gl_projectionmatrix.html}}
@@ -172,10 +180,10 @@ For validating both the calibration and also the proposed camera modeling within
 	\begin{floatrow}[2]
 		\ffigbox[\FBwidth]
 		{\includegraphics[height=.124\textheight]{dlp-calibration-pattern-wall}}
-		{\caption{One of the projector calibration patterns}\label{fig:dlp-calibration-pattern-wall}}
+		{\caption{One of the projector calibration patterns}\label{fig:dlp-calibration-pattern-wall}\vspace{-0.5em}}
 		\ffigbox[\FBwidth]
 		{\includegraphics[height=.124\textheight]{chessboard}}
-		{\caption{Projector validation pattern (white squares)}\label{fig:dlp-projected-chessboard}}
+		{\caption{Projector validation pattern (white squares)}\label{fig:dlp-projected-chessboard}\vspace{-0.5em}}
 	\end{floatrow}
 \end{figure}
 
@@ -194,13 +202,15 @@ For efficient 3D scene rendering, the Gazebo simulator relies on the cross platf
 
 For user interaction the Gazebo simulator has a Qt\footnote{\url{https://www.qt.io}} \gls{gui} that allows visual inspection of the scene while also giving the option to add new objects or move and rotate existing models. Moreover, for lightweight rendering it can also start in server mode without a \gls{gui}.
 
+\vspace{-0.5em}
 \begin{figure}[ht]
 	\centering
-	\includegraphics[width=0.99\linewidth]{scene-rendering}
+	\includegraphics[width=0.9\linewidth]{scene-rendering}
 	\caption{3D scene rendering using the Gazebo simulator}
 	\label{fig:scene-rendering}
+	\vspace{-0.5em}
 \end{figure}
-
+\vspace{-0.5em}
 
 
 \section{Human machine interface}\label{sec:human-machine-interaction}
@@ -216,27 +226,31 @@ When a \gls{roi} state machine activates its action, the 3D sensor data centroid
 \begin{figure}[H]
 	\begin{floatrow}[2]
 		\ffigbox[\FBwidth]
-		{\includegraphics[height=.23\textheight]{human-machine-interface}}
-		{\caption{Rendering of the human machine interface using Gazebo}\label{fig:human-machine-interface}}
+		{\includegraphics[height=.244\textheight]{human-machine-interface}}
+		{\caption{Rendering of the human machine interface using Gazebo}\label{fig:human-machine-interface}\vspace{-0.5em}}
 		\ffigbox[\FBwidth]
-		{\includegraphics[height=.23\textheight]{interaction-rois}}
-		{\caption{\glspl{roi} for the \gls{hmi} (overlaid on top of the Kinect 2 point cloud sensor data using Rviz)}\label{fig:interaction-rois}}
+		{\includegraphics[height=.244\textheight]{interaction-rois}}
+		{\caption{\glspl{roi} for the \gls{hmi} (overlaid on top of the Kinect 2 point cloud sensor data using Rviz)}\label{fig:interaction-rois}\vspace{-0.5em}}
 	\end{floatrow}
 \end{figure}
 
+\vspace{-0.7em}
 \begin{figure}[ht]
 	\begin{floatrow}[3]
 		\ffigbox[\FBwidth]
-		{\includegraphics[height=.15\textheight]{interaction-pause}}
-		{\caption{Example of video play / pause interaction}\label{fig:interaction-pause}}
+		{\includegraphics[height=.148\textheight]{interaction-pause}}
+		{\caption{Example of video play / pause interaction}\label{fig:interaction-pause}\vspace{-0.5em}}
+		\hspace{0.01em}
 		\ffigbox[\FBwidth]
-		{\includegraphics[height=.15\textheight]{interaction-next}}
-		{\caption{Visual highlight of the request to move to the next assembly step}\label{fig:interaction-next}}
+		{\includegraphics[height=.148\textheight]{interaction-next}}
+		{\caption{Visual highlight of the request to move to the next assembly step}\label{fig:interaction-next}\vspace{-0.5em}}
+		\hspace{0.01em}
 		\ffigbox[\FBwidth]
-		{\includegraphics[height=.15\textheight]{interaction-seek-2}}
-		{\caption{Example of video seek interaction}\label{fig:interaction-seek}}
+		{\includegraphics[height=.148\textheight]{interaction-seek-2}}
+		{\caption{Example of video seek interaction}\label{fig:interaction-seek}\vspace{-0.5em}}
 	\end{floatrow}
 \end{figure}
+\vspace{-0.3em}
 
 
 \section{Object 3D reconstruction}\label{sec:object-reconstruction}
@@ -247,39 +261,46 @@ The last step of the assembly process included a visual inspection stage perform
 
 \begin{figure}[!ht]
 	\centering
-	\includegraphics[height=.15\textheight]{mitsubishi-m000t20873-front}
-	\includegraphics[height=.15\textheight]{mitsubishi-m000t20873-back}
+	\includegraphics[height=.14\textheight]{mitsubishi-m000t20873-front}
+	\hspace{1em}
+	\includegraphics[height=.14\textheight]{mitsubishi-m000t20873-back}
 	\caption{Mitsubishi M000T20873 starter motor}
 	\label{fig:starter-motor}
+	\vspace{-0.5em}
 \end{figure}
+\vspace{-0.5em}
 
 \begin{figure}[!ht]
 	\centering
-	\includegraphics[height=.13\textheight]{object-reconstruction-front}
+	\includegraphics[height=.115\textheight]{object-reconstruction-front}
 	\hspace{1em}
-	\includegraphics[height=.13\textheight]{object-reconstruction-back}
+	\includegraphics[height=.115\textheight]{object-reconstruction-back}
 	\caption{3D model of the starter motor reconstructed using the David Laser structured light 3D scanner}
 	\label{fig:object-reconstruction}
+	\vspace{-0.5em}
 \end{figure}
-
+\vspace{-0.5em}
 
 
 \section{6 DoF pose estimation of objects}\label{sec:pose-estimation}
 
-Robust and accurate estimation of the 6 \gls{dof} pose of objects is a requirement when virtual information must be overlaid on top of objects that may change their location over time. To achieve this goal, the 3D point cloud registration system (drl\footnote{\url{https://github.com/carlosmccosta/dynamic_robot_localization}}) described in \cite{Costa2016} was fine-tuned for our table top use case\footnote{\url{https://github.com/carlosmccosta/object_recognition}}. Namely, the reference point cloud preprocessing pipeline was configured to randomly select 3000 vertices of the starter motor reconstructed mesh (small green circles shown in \cref{fig:initial-pose-estimation}) and compute the \gls{sift} keypoints (large yellow circles) and their associated \gls{fpfh} descriptors. Later on, the registration pipeline for the sensor point clouds was setup. Its filtering stage was configured to segment the target object (starter motor) by extracting the points that were within a \gls{roi} specified in a calibrated frame on top of the table. The \gls{roi} defined the plausible space in which the object could be placed and also allowed to remove the points associated with the table. Moreover, for ensuring that the initial pose estimation would take less than 3 seconds, a random sample filter was also configured to downsample the point cloud within the \gls{roi} to 2500 points.
+Robust and accurate estimation of the 6 \gls{dof} pose of objects is a requirement when virtual information must be overlaid on top of objects that may change their location over time. To achieve this goal, the 3D point cloud registration system (drl\footnote{\url{https://github.com/carlosmccosta/dynamic_robot_localization}}) described in \cite{Costa2016} was fine-tuned for our table top use case\footnote{\url{https://github.com/carlosmccosta/object_recognition}}. Namely, the reference point cloud preprocessing pipeline was configured to randomly select 3000 vertices of the starter motor reconstructed mesh (small green circles shown in \cref{fig:initial-pose-estimation}) and compute the \gls{sift} keypoints \cite{Lowe2004} (large yellow circles) and their associated \gls{fpfh} descriptors \cite{Rusu2009}. Later on, the registration pipeline for the sensor point clouds was setup. Its filtering stage was configured to segment the target object (starter motor) by extracting the points that were within a \gls{roi} specified in a calibrated frame on top of the table. The \gls{roi} defined the plausible space in which the object could be placed and also allowed to remove the points associated with the table. Moreover, for ensuring that the initial pose estimation would take less than 3 seconds, a random sample filter was also configured to downsample the point cloud within the \gls{roi} to 2500 points.
 
 Given that in this use case only a single object appears within the \gls{roi}, the clustering algorithms were not added to the drl runtime pipeline. But they will be very useful in the future when extending the proposed \gls{sar} system to provide contextual information and visual feedback for all the parts visible by the sensor (the clustering stage will then provide input for a object recognition module, which will estimate which \gls{cad} is the best fit for each group of 3D points).
 
-After finishing the setup of the preprocessing stage for the sensor point clouds pipeline, its initial alignment algorithms were configured and fine-tuned. Namely, the \gls{sift} keypoint detector along with the \gls{fpfh} keypoint descriptor and the \gls{ransac} feature matcher. Moreover, the \gls{icp} algorithm was also added for refining the point cloud registration in order to achieve a 6 \gls{dof} pose estimation with high accuracy (less than 2 mm of alignment error, as can be seen by the good overlap between the physical starter motor and its projected virtual outline displayed in \cref{fig:projection-mapping-2}).
+After finishing the setup of the preprocessing stage for the sensor point clouds pipeline, its initial alignment algorithms were configured and fine-tuned. Namely, the \gls{sift} keypoint detector along with the \gls{fpfh} keypoint descriptor and the \gls{ransac} feature matcher \cite{Rusu2009}. Moreover, the \gls{icp} \cite{Besl1992a} algorithm was also added for refining the point cloud registration in order to achieve a 6 \gls{dof} pose estimation with high accuracy (less than 2 mm of alignment error, as can be seen by the good overlap between the physical starter motor and its projected virtual outline displayed in \cref{fig:projection-mapping-2}).
 
 The drl modules discussed earlier were enough for estimating the 6 \gls{dof} pose of objects, but for improving the efficiency of the drl, the tracking and recovery matching pipelines were also configured. These two pipelines allow the definition of a set of cloud matchers that are fine-tuned to align the sensor data by successively updating the 6 \gls{dof} pose of the object as new sensor data arrives. This allows to run the robust, but computationally intensive feature matching algorithms once, and then rely on dense point cloud matching algorithms to quickly and accurately update the object pose at the frame rate of the 3D sensor (up to 30 Hz, depending on the CPU used). The tracking pipeline was configured to rely on the \gls{icp} algorithm with the point-to-point metric with a search radius of 0.07 m for establishing correspondences during the iterative matching process and with the maximum number of iterations set to 300. On the other hand, the recovery pipeline was fine-tuned to use the \gls{icp} algorithm with the point-to-plane metric with the search radius and number of iterations increased to 0.2 m and 400 respectively. This approach of starting with robust feature matching algorithms and then rely on tracking algorithms with the sporadic usage of recovery methods was critical for being able to track the object with a reasonable frame rate, which will be useful in the future when extending the proposed \gls{sar} system to monitor the operator actions for ensuring that he is following the instructions and did not forget or misplaced assembly parts.
 
 In \cref{fig:initial-pose-estimation} is shown an example of the estimation of the 6 \gls{dof} pose of the starter motor. The left image displays the overlay of the reference point cloud on top of the 3D sensor data in the previously estimated pose (before the operator occluded the part with its hand and moved it to a new place) while the right image shows the updated pose after alignment, that correctly detected that the operator moved the part to the right and rotated it 90º clockwise.
 
+\vspace{-0.5em}
 \begin{figure}[!ht]
 	\centering
 	\includegraphics[height=.11\textheight]{initial-pose-estimation-2-before}
 	\includegraphics[height=.11\textheight]{initial-pose-estimation-2-after}
 	\caption{Example of 6 DoF pose estimation of the assembled starter motor before (left) and after (right) the alignment of the 3D reconstructed mesh with the 3D sensor data}
 	\label{fig:initial-pose-estimation}
+	\vspace{-0.5em}
 \end{figure}
+\vspace{-1.5em}
