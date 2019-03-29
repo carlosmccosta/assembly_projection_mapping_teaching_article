@@ -12,7 +12,7 @@ Despite the wide range of technologies and hardware configurations (example for 
 \vspace{-0.5em}
 \begin{figure}[H]
 	\centering
-	\includegraphics[height=.145\textheight]{dlp-projector-diagram-dmd}
+	\includegraphics[height=.135\textheight]{dlp-projector-diagram-dmd}
 	\caption[Diagram of a single chip \glsentrytext{dlp} projector]{Diagram of a single chip \glsentrytext{dlp} projector\protect\footnotemark}
 	\label{fig:dlp-projector-diagram-dmd}
 	\vspace{-0.7em}
@@ -26,7 +26,7 @@ The extension of the default \gls{opengl} projection matrix is of critical impor
 \vspace{-0.5em}
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=.8\textwidth]{lens-shift--keystone}
+	\includegraphics[width=.77\textwidth]{lens-shift--keystone}
 	\caption[Diagram of lens shift (left) and keystone correction (right)]{Diagram of lens shift (left) and keystone correction (right)\protect\footnotemark}
 	\label{fig:lens-shift--keystone}
 	\vspace{-0.7em}
@@ -34,7 +34,7 @@ The extension of the default \gls{opengl} projection matrix is of critical impor
 \footnotetext[\numexpr\value{footnote}]{\url{http://www.theprojectorexpert.com/projector-lens-shift}}
 \vspace{-1em}
 
-The perspective projection of vertex data is a pivotal stage in any rendering engine. In \gls{opengl}, the projection matrix is one of the 4 main vertex transform stages (presented in \cref{fig:opengl-mvp}) and is responsible for converting 3D geometry from the camera space into the clipping space (as depicted in \cref{fig:gl-projection-matrix}). This matrix can be created using the $glOrtho$ function (matrix shown in \cref{eq:glOrtho}) for orthographic projection or the $glFrustum$ function (matrix presented in \cref{eq:glFrustum}) for perspective projection. Looking at both matrices it can be seen that the $glFrustum$ can be decomposed to include the $glOrtho$ matrix and a $Q$ matrix (shown in \cref{eq:Q}) that corresponds to the intrinsic parameters of a pinhole camera with the same focal length for the $X$ and $Y$ axis along with the principal point at the origin of the camera coordinate system and no axis skew. The main difference between the $Q$ matrix and the traditional $K$ matrix \cite{Hartley2003} (shown in \cref{eq:k}) is the bottom row of $Q$, in which the $w$ component of the homogeneous matrix was set to the $-Z$ coordinate. This is a matrix optimization associated with the perspective z-divide that is required to convert 4D homogeneous coordinates to 3D Cartesian coordinates. It has a negative sign because by default the \gls{opengl} camera is setup to look along the $-Z$ axis (as can be seen in \cref{fig:gl-projection-matrix}), and to simplify and optimize the calculations using the similar triangles properties (displayed in \cref{fig:similar-triangles}), the $Z$ coordinate needs to be negated for having a positive value. Looking at \cref{eq:k2}, it can be seen that $K$ can be adapted to take this sign inversion into consideration, allowing to map the $K'$ values into the $Q$ matrix.
+The perspective projection of vertex data is a pivotal stage in any rendering engine. In \gls{opengl}, the projection matrix is one of the 4 main vertex transform stages (presented in \cref{fig:opengl-mvp}) and is responsible for converting 3D geometry from the camera space into the clipping space (as depicted in \cref{fig:gl-projection-matrix}). This matrix can be created using the $glOrtho$ function (matrix shown in \cref{eq:glOrtho}) for orthographic projection or the $glFrustum$ function (matrix presented in \cref{eq:glFrustum}) for perspective projection. Looking at both matrices it can be seen that the $glFrustum$ can be decomposed to include the $glOrtho$ matrix and a $Q$ matrix (shown in \cref{eq:Q}) that corresponds to the intrinsic parameters of a pinhole camera with the same focal length for the $X$ and $Y$ axis along with the principal point at the origin of the camera coordinate system while having no axis skew. The main difference between the $Q$ matrix and the traditional $K$ matrix \cite{Hartley2003} (shown in \cref{eq:k}) is the bottom row of $Q$, in which the $w$ component of the homogeneous matrix was set to the $-Z$ coordinate. This is a matrix optimization associated with the perspective z-divide that is required to convert 4D homogeneous coordinates to 3D Cartesian coordinates. It has a negative sign because by default the \gls{opengl} camera is setup to look along the $-Z$ axis (as can be seen in \cref{fig:gl-projection-matrix}), and to simplify and optimize the calculations using the similar triangles properties (displayed in \cref{fig:similar-triangles}), the $Z$ coordinate needs to be negated for having a positive value. Looking at \cref{eq:k2}, it can be seen that $K$ can be adapted to take this sign inversion into consideration, allowing to map the $K'$ values into the $Q$ matrix.
 
 \vspace{-0.3em}
 \begin{figure}[H]
@@ -180,10 +180,10 @@ For validating both the calibration and also the proposed camera modeling within
 	\begin{floatrow}[2]
 		\ffigbox[\FBwidth]
 		{\includegraphics[height=.124\textheight]{dlp-calibration-pattern-wall}}
-		{\caption{One of the projector calibration patterns}\label{fig:dlp-calibration-pattern-wall}\vspace{-0.5em}}
+		{\caption{One of the projector gray code calibration patterns}\label{fig:dlp-calibration-pattern-wall}\vspace{-0.5em}}
 		\ffigbox[\FBwidth]
 		{\includegraphics[height=.124\textheight]{chessboard}}
-		{\caption{Projector validation pattern (white squares)}\label{fig:dlp-projected-chessboard}\vspace{-0.5em}}
+		{\caption{Projector validation pattern (projected white squares)}\label{fig:dlp-projected-chessboard}\vspace{-0.5em}}
 	\end{floatrow}
 \end{figure}
 
